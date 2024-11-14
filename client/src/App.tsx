@@ -1,9 +1,14 @@
 import { Routes, Route} from 'react-router-dom'
+import Navbar from './Components/Navbar/Navbar'
+import Footer from './Components/Footer/Footer'
+
 
 function App() {
 
   return (
     <>
+   <Navbar />
+   <Footer />
      <Routes>
         <Route path="/" element={<h1 className='text-red-700 text-center p-4'>Home</h1>} />
         <Route path="/timeline" element={<h1 className='text-center'>Timeline</h1>} />
