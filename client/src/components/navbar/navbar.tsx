@@ -1,9 +1,28 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import './navbar.css'
 
-export default function navbar() {
-  return (
-    <div>
-      <h1>Navbar</h1>
-    </div>
-  )
-}
+const Navbar = () => {
+
+    const [sticky, setSticky] = useState(false);
+  
+    useEffect(()=> {
+      window.addEventListener('scroll', ()=>{
+        window.scrollY > 50 ?  setSticky(true) : setSticky(false);
+      })
+    },[])
+  
+    return (
+      <nav className={`container ${sticky? 'dark-nav' : ''}`}>
+        {/* <img src={logo} alt="" className='logo'/> */}
+        <ul>
+          <li>Home</li>
+          <li>Lorem</li>
+          <li>Lorem</li>
+          <li>Lorem</li>
+          <li><button className='btn'>My pages</button></li>
+        </ul>
+      </nav>
+    )
+  }
+  
+  export default Navbar
