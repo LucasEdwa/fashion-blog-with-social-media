@@ -3,19 +3,22 @@ const app = express();
 const port = 8000;
 const fileUpload = require('express-fileupload');
 const cors = require('cors');
-const router = express.Router();
 
 // Middleware
 app.use(express.json());
+app.use(cors());
+app.use(fileUpload({
+    createParentPath: true
+}));
 
 // Routes
 const authRouter = require('./routes/auth');
 const userRouter = require('./routes/current-user/user');
+const postRouter = require('./routes/post');
 app.use('/api', authRouter);
 app.use('/api', userRouter);
-app.use(cors());
-app.use(fileUpload());
-app.use(router);
+app.use('/api', postRouter);
+
 // Root route
 app.get('/', (req, res) => {
   res.send('Hello World!');

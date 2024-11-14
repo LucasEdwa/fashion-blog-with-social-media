@@ -3,21 +3,19 @@ const { PrismaClient } = require('@prisma/client');
 const { verifyToken } = require('../middlewares');
 const router = express.Router();
 
-
-
 const prisma = new PrismaClient();
 
 router.get('/current-user', verifyToken, async (req, res) => {
     const user = await prisma.user.findUnique({
-        where:{id: req.userId}    
+        where: { id: req.userId },
+        include: { posts: true }
     });
-    if(!user){
-        return res.status(404).json({error: 'User not found'});
-    } else{
-         res.send({user:user});
+    if (!user) {
+        return res.status(404).json({ error: 'User not found' });
+    } else {
+        res.send({ user: user });
     }
-}); 
-
+});
 
 // Manage users image using Express
 router.post('/upload-profile-picture', verifyToken, async (req, res) => {

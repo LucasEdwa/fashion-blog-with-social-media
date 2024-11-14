@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 const { PrismaClient } = require('@prisma/client');
+const { verifyToken } = require('./middlewares');
 
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
@@ -47,6 +48,14 @@ router.post('/sign-up', async (req, res) => {
     // Validate full name
     if (username.length < 3) {
         return res.status(400).json({ error: 'Invalid name' });
+    }
+    // validate username
+    const usernameValid = await prisma.user.findUnique({
+        where: { username: username }
+    });
+
+    if (usernameValid) {
+        return res.status(400).json({ error: 'username already exists' });
     }
 
  
@@ -107,4 +116,50 @@ router.post('/sign-in', async (req, res) => {
     }
 });
 
+router.post('/sign-out', (req, res) => {
+    // ## destroy token on client side
+    res.json({ message: 'Sign out successful' });
+});
+
+
+// Endpoint to edit user data
+router.put('/edit-user', verifyToken, async (req, res) => {
+    const { email, firstName, lastName, username, password } = req.body;
+
+    // Validate email if provided
+    if (email && !emailValidator.validate(email)) {
+        return res.status(400).json({ error: 'Invalid email' });
+    }
+
+    // Validate password if provided
+    if (password && !schema.validate(password)) {
+        return res.status(400).json({ error: 'Invalid password' });
+    }
+
+    // Validate username if provided
+    if (username && username.length < 3) {
+        return res.status(400).json({ error: 'Invalid username' });
+    }
+
+    try {
+        const updateData = {};
+        if (email) updateData.email = email;
+        if (firstName) updateData.firstName = firstName;
+        if (lastName) updateData.lastName = lastName;
+        if (username) updateData.username = username;
+        if (password) updateData.password = await bcrypt.hash(password, 10);
+
+        const updatedUser = await prisma.user.update({
+            where: { id: req.userId },
+            data: updateData
+        });
+
+        res.json({ message: 'User updated successfully', user: updatedUser });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ error: 'Unable to update user' });
+    }
+});
+
+module.exports = router;
 module.exports = router;
