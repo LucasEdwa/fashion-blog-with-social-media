@@ -15,9 +15,11 @@ app.use(fileUpload({
 const authRouter = require('./routes/auth');
 const userRouter = require('./routes/current-user/user');
 const postRouter = require('./routes/post');
+const seasonsRouter = require('./routes/seasons');
 app.use('/api', authRouter);
 app.use('/api', userRouter);
 app.use('/api', postRouter);
+app.use('/api', seasonsRouter);
 
 // Root route
 app.get('/', (req, res) => {
